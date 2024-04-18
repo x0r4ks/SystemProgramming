@@ -1,4 +1,5 @@
 #include <iostream>
+#include <conio.h>
 
 #define MIN_TANK_VOLUME				20
 #define MAX_TANK_VOLUME				120
@@ -24,6 +25,11 @@ public:
 
 		this->fuel_level = 0;
 		std::cout << "Tank is ready. 0x"<< this << "\n";
+	}
+
+	~Tank()
+	{
+		std::cout << "Tank is over: 0x" << this << "\n";
 	}
 
 	const int get_VOLUME() const
@@ -135,6 +141,91 @@ private:
 	bool is_started;
 };
 
+class Car
+{
+public:
+	Car(int consumption=10, int volume=60) 
+		: engine(consumption),
+		tank(volume),
+		driver_inside(false)
+	{
+		std::cout << "Your car is ready to go.\n";
+	}
+
+	~Car()
+	{
+		std::cout << "Your car is over.\n";
+	}
+
+	void get_in()
+	{
+		driver_inside = true;
+		panel();
+	}
+
+	void get_out()
+	{
+		driver_inside = false;
+		std::cout << "Out of the car.\n";
+	}
+
+	void control()
+	{
+		uint8_t key;
+		
+
+		do {
+			
+			key = _getch_nolock();
+			std::cout << key << "\n";
+
+			switch (key) {
+				case 13: 
+					driver_inside ? get_out() : get_in();
+					break;
+			}
+
+			/*if (driver_inside)
+				display();*/
+
+		} while (key != 27);
+		
+	}
+
+	void panel() const
+	{
+		while (driver_inside) {
+			system("cls");
+			std::cout << "Fuel level: " << tank.get_fuel_level() << " litres.\n";
+			std::cout << "Engine is " << (engine.started() ? "started" : "stopped") << std::endl;
+			
+		}
+	}
+
+	void display() const 
+	{
+		system("cls");
+		std::cout << "Fuel level: " << tank.get_fuel_level() << " litres.\n";
+		std::cout << "Engine is " << (engine.started() ? "started" : "stopped") << std::endl;
+		
+	}
+
+	void info() const
+	{
+		std::cout << "---- Engine info ----\n";
+		engine.info();
+		std::cout << "----- Tank info -----\n";
+		tank.info();
+		std::cout << "---------------------\n";
+	}
+
+private:
+	Engine engine;
+	Tank tank;
+	bool driver_inside;
+
+};
+
 int main()
 {
 	setlocale(0, "Rus");
@@ -151,8 +242,18 @@ int main()
 
 #endif // TANK_CHECK
 
+#ifdef ENGINE_CHECK
+
 	Engine engine(10);
 	engine.info();
+
+#endif //ENGINE_CHECK
+
+
+	Car bmw;
+	//bmw.info();
+
+	bmw.control();
 
 	return 0;
 }
