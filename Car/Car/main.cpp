@@ -1,7 +1,12 @@
 #include <iostream>
 
-#define MIN_TANK_VOLUME		20
-#define MAX_TANK_VOLUME		120
+#define MIN_TANK_VOLUME				20
+#define MAX_TANK_VOLUME				120
+
+#define MIN_ENGINE_CONSUMPTION		3
+#define MAX_ENGINE_CONSUMPTION		30
+
+//#define TANK_CHECK
 
 int check_voluem(int volume)
 {
@@ -72,10 +77,44 @@ private:
 	double fuel_level;
 };
 
+
+class Engine
+{
+	const double CONSUMPTION;
+	double consumption_per_second;
+public:
+	double get_consumption()const
+	{
+		return CONSUMPTION;
+	}
+	double get_consumption_per_second()const
+	{
+		return consumption_per_second;
+	}
+	Engine(double consumption, double consumption_per_second)
+		:CONSUMPTION(
+			consumption < MIN_ENGINE_CONSUMPTION ? MIN_ENGINE_CONSUMPTION :
+			consumption > MAX_ENGINE_CONSUMPTION ? MAX_ENGINE_CONSUMPTION :
+			consumption)
+	{
+		this->consumption_per_second = CONSUMPTION * 3e-5;
+		std::cout << "Engine is ready: " << this << std::endl;
+	}
+	~Engine()
+	{
+		std::cout << "Engine is over: " << this << std::endl;
+	}
+	void info()const
+	{
+		std::cout << "Consumpition: " << CONSUMPTION << " liters/100km" << std::endl;
+	}
+};
+
 int main()
 {
 	setlocale(0, "Rus");
 
+#ifdef TANK_CHECK
 	Tank tank(50);
 	
 	int fuel;
@@ -84,6 +123,8 @@ int main()
 		tank.fill(fuel);
 		tank.info();
 	} while (fuel > 0);
+
+#endif // TANK_CHECK
 
 	return 0;
 }
