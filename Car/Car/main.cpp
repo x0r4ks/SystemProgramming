@@ -7,22 +7,19 @@
 #define MAX_ENGINE_CONSUMPTION		30
 
 //#define TANK_CHECK
+#define ENGINE
 
-int check_voluem(int volume)
-{
-	if (volume < MIN_TANK_VOLUME) {
-		volume = MIN_TANK_VOLUME;
-	}
-	else if (volume > MAX_TANK_VOLUME) {
-		volume = MAX_TANK_VOLUME;
-	}
-	return volume;
-}
 
 class Tank 
 {
 public:
-	Tank(int volume) : VOLUME(check_voluem(volume))
+	Tank(int volume) 
+		: VOLUME
+		(
+			volume < MIN_TANK_VOLUME ? MIN_TANK_VOLUME :
+			volume > MAX_TANK_VOLUME ? MAX_TANK_VOLUME :
+			volume
+		)
 	{
 
 		this->fuel_level = 0;
@@ -91,22 +88,29 @@ public:
 	{
 		return consumption_per_second;
 	}
-	Engine(double consumption, double consumption_per_second)
-		:CONSUMPTION(
+
+
+	Engine(double consumption)
+		:CONSUMPTION
+		(
 			consumption < MIN_ENGINE_CONSUMPTION ? MIN_ENGINE_CONSUMPTION :
 			consumption > MAX_ENGINE_CONSUMPTION ? MAX_ENGINE_CONSUMPTION :
-			consumption)
+			consumption
+		)
 	{
 		this->consumption_per_second = CONSUMPTION * 3e-5;
-		std::cout << "Engine is ready: " << this << std::endl;
+		std::cout << "Engine is ready: 0x" << this << std::endl;
 	}
+
 	~Engine()
 	{
-		std::cout << "Engine is over: " << this << std::endl;
+		std::cout << "Engine is over: 0x" << this << std::endl;
 	}
+
 	void info()const
 	{
 		std::cout << "Consumpition: " << CONSUMPTION << " liters/100km" << std::endl;
+		std::cout << "Consumpition perseconds: " << consumption_per_second << " liters/100km" << std::endl;
 	}
 };
 
@@ -125,6 +129,9 @@ int main()
 	} while (fuel > 0);
 
 #endif // TANK_CHECK
+
+	Engine engine(10);
+	engine.info();
 
 	return 0;
 }
