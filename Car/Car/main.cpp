@@ -77,14 +77,12 @@ private:
 
 class Engine
 {
-	const double CONSUMPTION;
-	double consumption_per_second;
 public:
-	double get_consumption()const
+	double get_consumption() const
 	{
 		return CONSUMPTION;
 	}
-	double get_consumption_per_second()const
+	double get_consumption_per_second() const
 	{
 		return consumption_per_second;
 	}
@@ -96,9 +94,11 @@ public:
 			consumption < MIN_ENGINE_CONSUMPTION ? MIN_ENGINE_CONSUMPTION :
 			consumption > MAX_ENGINE_CONSUMPTION ? MAX_ENGINE_CONSUMPTION :
 			consumption
-		)
+		),
+		consumption_per_second(CONSUMPTION * 3e-5), 
+		is_started(false)
 	{
-		this->consumption_per_second = CONSUMPTION * 3e-5;
+		//this->consumption_per_second = CONSUMPTION * 3e-5;
 		std::cout << "Engine is ready: 0x" << this << std::endl;
 	}
 
@@ -107,11 +107,32 @@ public:
 		std::cout << "Engine is over: 0x" << this << std::endl;
 	}
 
-	void info()const
+	void start() 
+	{
+		is_started = true;
+	}
+
+	void stop()
+	{
+		is_started = false;
+	}
+
+	bool started() const
+	{
+		return is_started;
+	}
+
+	void info() const
 	{
 		std::cout << "Consumpition: " << CONSUMPTION << " liters/100km" << std::endl;
-		std::cout << "Consumpition perseconds: " << consumption_per_second << " liters/100km" << std::endl;
+		std::cout << "Consumpition perseconds: " << consumption_per_second << " liters/sec" << std::endl;
+		std::cout << "Engine is " << (is_started ? "started" : "stopped") << std::endl;
 	}
+
+private:
+	const double CONSUMPTION;
+	double consumption_per_second;
+	bool is_started;
 };
 
 int main()
