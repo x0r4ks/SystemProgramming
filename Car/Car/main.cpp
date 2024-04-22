@@ -1,5 +1,6 @@
 #include <iostream>
 #include <conio.h>
+#include <windows.h>
 
 #define MIN_TANK_VOLUME				20
 #define MAX_TANK_VOLUME				120
@@ -150,6 +151,7 @@ public:
 		driver_inside(false)
 	{
 		std::cout << "Your car is ready to go.\n";
+		this->tank.fill(1550);
 	}
 
 	~Car()
@@ -160,7 +162,7 @@ public:
 	void get_in()
 	{
 		driver_inside = true;
-		panel();
+		//panel();
 	}
 
 	void get_out()
@@ -183,23 +185,27 @@ public:
 				case 13: 
 					driver_inside ? get_out() : get_in();
 					break;
+
+				case 0x47:
+					engine.started() ? engine.stop() : engine.start();
+					break;
 			}
 
-			/*if (driver_inside)
-				display();*/
+			if (driver_inside)
+				display();
+
+			if (engine.started() && tank.get_fuel_level() > 0) {
+				tank.give_fuel(engine.get_consumption_per_second());
+			}
+			else if (tank.get_fuel_level() <= 0) {
+				engine.stop();
+
+			}
+			Sleep(1000);
+			
 
 		} while (key != 27);
 		
-	}
-
-	void panel() const
-	{
-		while (driver_inside) {
-			system("cls");
-			std::cout << "Fuel level: " << tank.get_fuel_level() << " litres.\n";
-			std::cout << "Engine is " << (engine.started() ? "started" : "stopped") << std::endl;
-			
-		}
 	}
 
 	void display() const 
@@ -252,8 +258,9 @@ int main()
 
 	Car bmw;
 	//bmw.info();
-
+	
 	bmw.control();
+
 
 	return 0;
 }
