@@ -13,6 +13,9 @@ using namespace std::chrono_literals;
 #define MIN_ENGINE_CONSUMPTION			3
 #define MAX_ENGINE_CONSUMPTION			30
 
+#define MAX_SPEED_LOW_LIMIT				50
+#define MAX_SPEED_HIGH_LIMIT			1235 // Одна скорость звука
+
 
 //#define TANK_CHECK
 #define ENGINE
@@ -30,6 +33,10 @@ enum KEYS {
 
 	W=87,
 	w=119,
+
+	S = 83,
+	s = 115,
+	
 
 };
 
@@ -167,13 +174,20 @@ private:
 class Car
 {
 public:
-	Car(int consumption = 10, int volume = 60)
+	Car(int consumption = 10, int volume = 60, int max_speed = 250)
 		: engine(consumption),
 		tank(volume),
-		driver_inside(false)
+		driver_inside(false),
+		MAX_SPEED(
+			max_speed < MAX_SPEED_LOW_LIMIT ? MAX_SPEED_LOW_LIMIT :
+			max_speed > MAX_SPEED_HIGH_LIMIT ? MAX_SPEED_HIGH_LIMIT :
+			max_speed
+		),
+		current_speed(0),
+		acceleration(MAX_SPEED/20)
 	{
 		std::cout << "Your car is ready to go.\n";
-
+		
 	}
 
 	~Car()
@@ -195,6 +209,7 @@ public:
 			threads.panel_thread.join();
 		}
 		system("cls");
+		
 		std::cout << "Out of the car.\n";
 	}
 
@@ -230,8 +245,17 @@ public:
 				}
 				break;
 
+			case KEYS::W:
+			case KEYS::w:
+				if (driver_inside && engine.started())
+					accelerate();
+				break;
 
-
+			case KEYS::S:
+			case KEYS::s:
+				
+				slow_down();
+				break;
 
 			case KEYS::ESCAPE:
 				get_out();
@@ -258,6 +282,7 @@ public:
 
 			} std::cout << std::endl;
 			std::cout << "Engine is " << (engine.started() ? "started" : "stopped") << std::endl;
+			std::cout << "Speed: " << current_speed << "km/h\n";
 			
 			std::this_thread::sleep_for(100ms);
 		}
@@ -279,10 +304,46 @@ public:
 		engine.stop();
 	}
 
+	void free_wheeling()
+	{
+		while (--current_speed) {
+			std::this_thread::sleep_for(1s);
+			if (current_speed <= 0) {
+				current_speed = 0;
+			}
+		}
+	}
+
+	void accelerate()
+	{
+		current_speed += acceleration;
+		if (current_speed >= MAX_SPEED) {
+			current_speed = MAX_SPEED;
+		}
+
+		if (!threads.free_wheeling_thread.joinable()) {
+			threads.free_wheeling_thread = std::thread(&Car::free_wheeling, this);
+		}
+
+		std::this_thread::sleep_for(1s);
+	}
+
+	void slow_down()
+	{
+		current_speed -= acceleration;
+		if (current_speed <= 0) {
+			current_speed = 0;
+		}
+		if (threads.free_wheeling_thread.joinable()) {
+			threads.free_wheeling_thread.join();
+		}
+
+		std::this_thread::sleep_for(1s);
+	}
+
 	void engine_idle()
 	{
-		while (engine.started() && tank.give_fuel(engine.get_consumption_per_second()))
-		{
+		while (engine.started() && tank.give_fuel(engine.get_consumption_per_second())) {
 			std::this_thread::sleep_for(1s);
 		}
 		
@@ -301,11 +362,17 @@ private:
 	Engine engine;
 	Tank tank;
 	bool driver_inside;
+
+	int current_speed;
+	const int MAX_SPEED;
+	double acceleration;
+
 	
 
-	struct Threads {
+	struct {
 		std::thread panel_thread;
 		std::thread engine_idle_thread;
+		std::thread free_wheeling_thread;
 		
 	} threads;
 
