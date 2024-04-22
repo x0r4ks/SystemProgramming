@@ -2,6 +2,8 @@
 #include <conio.h>
 #include <thread>
 
+#include <Windows.h>
+
 using namespace std::chrono_literals;
 
 
@@ -12,13 +14,24 @@ using namespace std::chrono_literals;
 #define MAX_ENGINE_CONSUMPTION			30
 
 
-#define KEY_ENTER						13
-#define KEY_ESC							27
-#define KEY_G							103
-
 //#define TANK_CHECK
 #define ENGINE
 
+
+enum KEYS {
+	ENTER = 13,
+	ESCAPE = 27,
+	
+	g = 103,
+	G = 71,
+
+	F=70,
+	f=102,
+
+	W=87,
+	w=119,
+
+};
 
 class Tank
 {
@@ -177,36 +190,58 @@ public:
 	void get_out()
 	{
 		driver_inside = false;
-		std::cout << "Out of the car.\n";
+		
 		if (threads.panel_thread.joinable()) {
 			threads.panel_thread.join();
 		}
+		system("cls");
+		std::cout << "Out of the car.\n";
 	}
 
 	void control()
 	{
 		uint8_t key;
 
+		
 		do {
 
 			key = _getch();
 			std::cout << key << "\n";
 
 			switch (key) {
-			case KEY_ENTER:
+			case KEYS::ENTER:
 				driver_inside ? get_out() : get_in();
 				break;
 
-			case KEY_G:
-				engine.started() ? engine.stop() : engine.start();
+			case KEYS::g:
+			case KEYS::G:
+				engine.started() ? stop() : start();
 				break;
 
-			case KEY_ESC:
+			case KEYS::F:
+			case KEYS::f:
+				if (driver_inside) {
+					std::cout << "Выйдите из машины!\n\a";
+				}
+				else {
+					double fuel;
+					std::cout << "Введите уровень топлива: "; std::cin >> fuel;
+					tank.fill(fuel);
+				}
+				break;
+
+
+
+
+			case KEYS::ESCAPE:
 				get_out();
+				stop();
 				break;
 			}
 
-		} while (key != KEY_ESC);
+			
+
+		} while (key != KEYS::ESCAPE);
 
 	}
 
@@ -214,10 +249,43 @@ public:
 	{
 		while (driver_inside) {
 			system("cls");
-			std::cout << "Fuel level: " << tank.get_fuel_level() << " litres.\n";
+			std::cout << "Fuel level: " << tank.get_fuel_level() << " litres.\t";
+			if (tank.get_fuel_level() < 5) {
+				HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+				SetConsoleTextAttribute(hConsole, 0xCF);
+				std::cout << " Low Fule \a";
+				SetConsoleTextAttribute(hConsole, 0x07);
+
+			} std::cout << std::endl;
 			std::cout << "Engine is " << (engine.started() ? "started" : "stopped") << std::endl;
-			std::this_thread::sleep_for(200ms);
+			
+			std::this_thread::sleep_for(100ms);
 		}
+	}
+
+	void start()
+	{
+		if (tank.get_fuel_level() > 0 ) {
+			engine.start();
+			threads.engine_idle_thread = std::thread(&Car::engine_idle, this);
+		}
+	}
+
+	void stop()
+	{
+		if (threads.engine_idle_thread.joinable()) {
+			threads.engine_idle_thread.join();
+		}
+		engine.stop();
+	}
+
+	void engine_idle()
+	{
+		while (engine.started() && tank.give_fuel(engine.get_consumption_per_second()))
+		{
+			std::this_thread::sleep_for(1s);
+		}
+		
 	}
 
 	void info() const
@@ -233,9 +301,12 @@ private:
 	Engine engine;
 	Tank tank;
 	bool driver_inside;
+	
 
 	struct Threads {
 		std::thread panel_thread;
+		std::thread engine_idle_thread;
+		
 	} threads;
 
 };
@@ -265,7 +336,7 @@ int main()
 #endif //ENGINE_CHECK
 
 
-	Car bmw;
+	Car bmw(13, 94);
 	//bmw.info();
 
 	bmw.control();
