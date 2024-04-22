@@ -1,11 +1,20 @@
 #include <iostream>
 #include <conio.h>
+#include <thread>
 
-#define MIN_TANK_VOLUME				20
-#define MAX_TANK_VOLUME				120
+using namespace std::chrono_literals;
 
-#define MIN_ENGINE_CONSUMPTION		3
-#define MAX_ENGINE_CONSUMPTION		30
+
+#define MIN_TANK_VOLUME					20
+#define MAX_TANK_VOLUME					120
+
+#define MIN_ENGINE_CONSUMPTION			3
+#define MAX_ENGINE_CONSUMPTION			30
+
+
+#define KEY_ENTER						13
+#define KEY_ESC							27
+#define KEY_G							103
 
 //#define TANK_CHECK
 #define ENGINE
@@ -151,6 +160,7 @@ public:
 		driver_inside(false)
 	{
 		std::cout << "Your car is ready to go.\n";
+
 	}
 
 	~Car()
@@ -161,13 +171,16 @@ public:
 	void get_in()
 	{
 		driver_inside = true;
-		panel();
+		threads.panel_thread = std::thread(&Car::panel, this);
 	}
 
 	void get_out()
 	{
 		driver_inside = false;
 		std::cout << "Out of the car.\n";
+		if (threads.panel_thread.joinable()) {
+			threads.panel_thread.join();
+		}
 	}
 
 	void control()
@@ -176,16 +189,24 @@ public:
 
 		do {
 
-			key = _getch_nolock();
+			key = _getch();
 			std::cout << key << "\n";
 
 			switch (key) {
-			case 13:
+			case KEY_ENTER:
 				driver_inside ? get_out() : get_in();
+				break;
+
+			case KEY_G:
+				engine.started() ? engine.stop() : engine.start();
+				break;
+
+			case KEY_ESC:
+				get_out();
 				break;
 			}
 
-		} while (key != 27);
+		} while (key != KEY_ESC);
 
 	}
 
@@ -195,11 +216,9 @@ public:
 			system("cls");
 			std::cout << "Fuel level: " << tank.get_fuel_level() << " litres.\n";
 			std::cout << "Engine is " << (engine.started() ? "started" : "stopped") << std::endl;
-
+			std::this_thread::sleep_for(200ms);
 		}
 	}
-
-
 
 	void info() const
 	{
@@ -215,7 +234,12 @@ private:
 	Tank tank;
 	bool driver_inside;
 
+	struct Threads {
+		std::thread panel_thread;
+	} threads;
+
 };
+
 
 int main()
 {
