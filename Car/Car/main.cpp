@@ -185,9 +185,6 @@ public:
 					break;
 			}
 
-			/*if (driver_inside)
-				display();*/
-
 		} while (key != 27);
 		
 	}
@@ -202,13 +199,7 @@ public:
 		}
 	}
 
-	void display() const 
-	{
-		system("cls");
-		std::cout << "Fuel level: " << tank.get_fuel_level() << " litres.\n";
-		std::cout << "Engine is " << (engine.started() ? "started" : "stopped") << std::endl;
-		
-	}
+	
 
 	void info() const
 	{
