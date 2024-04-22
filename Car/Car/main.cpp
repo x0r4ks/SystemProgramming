@@ -162,7 +162,7 @@ public:
 	void get_in()
 	{
 		driver_inside = true;
-		//panel();
+		
 	}
 
 	void get_out()
