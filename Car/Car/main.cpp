@@ -282,7 +282,7 @@ public:
 
 			} std::cout << std::endl;
 			std::cout << "Engine is " << (engine.started() ? "started" : "stopped") << std::endl;
-			std::cout << "Speed: " << current_speed << "km/h\n";
+			std::cout << "Speed: " << current_speed << " km/h\n";
 			
 			std::this_thread::sleep_for(100ms);
 		}
