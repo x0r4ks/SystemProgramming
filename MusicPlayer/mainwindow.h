@@ -1,12 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "fx.h"
+
 #include <QMainWindow>
 #include <QMediaPlayer>
 
 #include <QAudioOutput>
 #include <QListWidgetItem>
 #include <QGraphicsPixmapItem>
+
+#include "settingsform.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -47,8 +51,11 @@ private slots:
 
     void on_actionOpen_Dir_triggered();
 
+    void on_actionSettings_triggered();
+
 private:
     Ui::MainWindow *ui;
+    SettingsForm *sf;
     QMediaPlayer *player;
     QAudioOutput audio_out;
 

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QStandardPaths>
@@ -59,6 +60,51 @@ MainWindow::MainWindow(QWidget *parent)
 
         old_size = ui->image_prev->size();
     });
+
+    QFileInfo f(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0)+"/"+PROGRAM_NAME+"/"+"music_list.txt");
+    if (!f.exists()) {
+        QDir dir;
+        dir.mkdir(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0)+"/"+PROGRAM_NAME);
+        QFile f(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0)+"/"+PROGRAM_NAME+"/"+"music_list.txt");
+
+        f.open(QIODevice::WriteOnly);
+
+        f.write(QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0).toStdString().c_str());
+
+        f.close();
+    } else {
+        QFile f(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0)+"/"+PROGRAM_NAME+"/"+"music_list.txt");
+
+        f.open(QIODevice::ReadOnly);
+
+        QTextStream in(&f);
+
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+
+            QDirIterator it(line, QStringList(), QDir::Files, QDirIterator::Subdirectories);
+            QStringList qsl;
+
+            while (it.hasNext())
+                qsl << it.next();
+
+            QStringList suffix;
+            suffix << "mp3" << "wav" << "flac" << "ogg";
+
+            for (int i = 0; i < qsl.size(); i++) {
+                if (!paths.contains(qsl.at(i))) {
+                    QFileInfo f(qsl.at(i));
+                    if (suffix.contains(f.suffix())) {
+                        ui->playlist_lv->addItem(QString::number(i+1) + " " + f.fileName());
+                        paths.push_back(qsl.at(i));
+                    }
+
+                }
+            }
+
+        }
+        f.close();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -66,6 +112,7 @@ MainWindow::~MainWindow()
     delete item;
     delete scene;
     delete player;
+    delete sf;
     delete ui;
 }
 
@@ -239,4 +286,13 @@ void MainWindow::on_actionOpen_Dir_triggered()
 
 
 
+
+
+void MainWindow::on_actionSettings_triggered()
+{
+
+    sf = new SettingsForm();
+    sf->show();
+
+}
 

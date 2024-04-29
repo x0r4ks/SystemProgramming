@@ -377,22 +377,28 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>App</string>
     </property>
     <addaction name="actionOpen_Files"/>
     <addaction name="actionOpen_Dir"/>
+    <addaction name="actionSettings"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen_Files">
    <property name="text">
-    <string>Open Files</string>
+    <string>&amp;Open Files</string>
    </property>
   </action>
   <action name="actionOpen_Dir">
    <property name="text">
-    <string>Open Dir</string>
+    <string>Load &amp;Dir</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>
