@@ -42,11 +42,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->player, &QMediaPlayer::metaDataChanged, this, [this](){
         QMediaMetaData md = this->player->metaData();
         ui->music_file_name->setText(md.value(QMediaMetaData::Title).toString());
-        QImage img = md.value(QMediaMetaData::ThumbnailImage).view<QImage>();
+        ui->albom_name_lbl->setText(md.value(QMediaMetaData::AlbumTitle).toString());
+        ui->group_name_lbl->setText(md.value(QMediaMetaData::ContributingArtist).toString());
+
+
+        img = md.value(QMediaMetaData::ThumbnailImage).view<QImage>();
         scene = new QGraphicsScene();
-
-        // img= img.scaled(ui->image_prev->size().width(), ui->image_prev->size().height(), Qt::KeepAspectRatio);
-
 
         ui->image_prev->setScene(scene);
 
@@ -56,12 +57,14 @@ MainWindow::MainWindow(QWidget *parent)
 
         scene->addItem(item);
 
-
+        old_size = ui->image_prev->size();
     });
 }
 
 MainWindow::~MainWindow()
 {
+    delete item;
+    delete scene;
     delete player;
     delete ui;
 }
@@ -103,16 +106,15 @@ void MainWindow::update_position(qint64 dur)
     sec %= 60;
     ui->curent_duration_lbl->setText(QString::number(min) + ":" + ((sec < 10)?"0":"") + QString::number(sec));
 
-
+    if (ui->image_prev->size() != old_size) {
+        this->player->metaDataChanged();
+    }
 
 }
 
 
 void MainWindow::on_actionOpen_Files_triggered()
 {
-    // paths.clear();
-    // ui->playlist_lv->clear();
-
     QVector<QString> np = QFileDialog::getOpenFileNames(this,
                                  "Chose audio file",
                                  QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0),
@@ -130,7 +132,6 @@ void MainWindow::on_actionOpen_Files_triggered()
     play_list_count = 0;
 
     play_by_id(play_list_count);
-
 
 }
 
@@ -154,9 +155,6 @@ void MainWindow::play_by_id(int id)
 
 
     this->player->play();
-
-    // ui->music_file_name->setText(ui->playlist_lv->currentItem()->text());
-
 }
 
 
@@ -203,7 +201,7 @@ void MainWindow::on_repiat_btn_clicked(bool checked)
     if (checked) {
         this->player->setLoops(2);
     } else {
-        this->player->setLoops(0);
+        this->player->setLoops(1);
 
     }
 }

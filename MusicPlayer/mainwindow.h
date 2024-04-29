@@ -55,6 +55,9 @@ private:
     QGraphicsScene *scene;
     QGraphicsPixmapItem *item;
 
+    QImage img;
+    QSize old_size;
+
     bool randome_mode = false;
     bool repeat_mode = false;
 
@@ -64,5 +67,7 @@ private:
     QVector<QString> paths;
 
     void play_by_id(int id);
+
+
 };
 #endif // MAINWINDOW_H
