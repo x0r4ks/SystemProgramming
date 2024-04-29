@@ -3,7 +3,9 @@
 
 #include <QMainWindow>
 #include <QMediaPlayer>
+
 #include <QAudioOutput>
+#include <QListWidgetItem>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -24,18 +26,39 @@ private slots:
 
     void on_play_stop_btn_clicked(bool checked);
 
-    void on_actionOpen_triggered();
+
 
     void update_duration(qint64 dur);
     void update_position(qint64 dur);
+
+    void on_actionOpen_Files_triggered();
+
+    void on_prev_btn_clicked();
+
+    void on_next_btn_clicked();
+
+    void on_playlist_lv_itemDoubleClicked(QListWidgetItem *item);
+
+    void on_rnd_btn_clicked(bool checked);
+
+
+    void on_repiat_btn_clicked(bool checked);
+
+    void on_actionOpen_Dir_triggered();
 
 private:
     Ui::MainWindow *ui;
     QMediaPlayer *player;
     QAudioOutput audio_out;
 
+    bool randome_mode = false;
+    bool repeat_mode = false;
 
 
-    QString path_to_file;
+    int play_list_count = -1;
+
+    QVector<QString> paths;
+
+    void play_by_id(int id);
 };
 #endif // MAINWINDOW_H

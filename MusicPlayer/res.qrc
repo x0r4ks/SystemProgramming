@@ -7,5 +7,7 @@
         <file>icons/play.png</file>
         <file>icons/previous-track.png</file>
         <file>icons/stop.png</file>
+        <file>icons/random.png</file>
+        <file>icons/loop.png</file>
     </qresource>
 </RCC>
