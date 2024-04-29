@@ -190,6 +190,9 @@
                <iconset resource="res.qrc">
                 <normaloff>:/icons/contorl/icons/loop.png</normaloff>:/icons/contorl/icons/loop.png</iconset>
               </property>
+              <property name="shortcut">
+               <string>Ctrl+L</string>
+              </property>
               <property name="checkable">
                <bool>true</bool>
               </property>
@@ -209,6 +212,9 @@
               <property name="icon">
                <iconset resource="res.qrc">
                 <normaloff>:/icons/contorl/icons/previous-track.png</normaloff>:/icons/contorl/icons/previous-track.png</iconset>
+              </property>
+              <property name="shortcut">
+               <string>Ctrl+Left</string>
               </property>
              </widget>
             </item>
@@ -233,6 +239,9 @@
                 <height>32</height>
                </size>
               </property>
+              <property name="shortcut">
+               <string>Space</string>
+              </property>
               <property name="checkable">
                <bool>true</bool>
               </property>
@@ -256,6 +265,9 @@
                <iconset resource="res.qrc">
                 <normaloff>:/icons/contorl/icons/next-track.png</normaloff>:/icons/contorl/icons/next-track.png</iconset>
               </property>
+              <property name="shortcut">
+               <string>Ctrl+Right</string>
+              </property>
              </widget>
             </item>
             <item>
@@ -272,6 +284,9 @@
               <property name="icon">
                <iconset resource="res.qrc">
                 <normaloff>:/icons/contorl/icons/random.png</normaloff>:/icons/contorl/icons/random.png</iconset>
+              </property>
+              <property name="shortcut">
+               <string>Ctrl+R</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -297,6 +312,12 @@
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
              <widget class="QLabel" name="curent_duration_lbl">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>0:00</string>
               </property>
@@ -304,6 +325,12 @@
             </item>
             <item>
              <widget class="QSlider" name="duration_slider">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="orientation">
                <enum>Qt::Orientation::Horizontal</enum>
               </property>
@@ -311,8 +338,14 @@
             </item>
             <item>
              <widget class="QLabel" name="duration_lbl">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string>0:0</string>
+               <string>0:00</string>
               </property>
              </widget>
             </item>
@@ -340,6 +373,35 @@
               </property>
               <property name="orientation">
                <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="mute_btn">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/contorl/icons/unmute.png</normaloff>:/icons/contorl/icons/unmute.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="shortcut">
+               <string>Ctrl+M</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -383,7 +445,23 @@
     <addaction name="actionOpen_Dir"/>
     <addaction name="actionSettings"/>
    </widget>
+   <widget class="QMenu" name="menuContol">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
+    </property>
+    <addaction name="actionvolumeUP"/>
+    <addaction name="actionvolumeDown"/>
+    <addaction name="actionmoveToLeft"/>
+    <addaction name="actionmoveToRight"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuContol"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen_Files">
@@ -398,7 +476,39 @@
   </action>
   <action name="actionSettings">
    <property name="text">
-    <string>Settings</string>
+    <string>&amp;Settings</string>
+   </property>
+  </action>
+  <action name="actionvolumeUP">
+   <property name="text">
+    <string>volumeUP</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Up</string>
+   </property>
+  </action>
+  <action name="actionvolumeDown">
+   <property name="text">
+    <string>volumeDown</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Down</string>
+   </property>
+  </action>
+  <action name="actionmoveToLeft">
+   <property name="text">
+    <string>moveToLeft</string>
+   </property>
+   <property name="shortcut">
+    <string>Left</string>
+   </property>
+  </action>
+  <action name="actionmoveToRight">
+   <property name="text">
+    <string>moveToRight</string>
+   </property>
+   <property name="shortcut">
+    <string>Right</string>
    </property>
   </action>
  </widget>

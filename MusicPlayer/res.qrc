@@ -9,5 +9,7 @@
         <file>icons/stop.png</file>
         <file>icons/random.png</file>
         <file>icons/loop.png</file>
+        <file>icons/mute.png</file>
+        <file>icons/unmute.png</file>
     </qresource>
 </RCC>

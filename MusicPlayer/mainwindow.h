@@ -53,6 +53,16 @@ private slots:
 
     void on_actionSettings_triggered();
 
+    void on_mute_btn_clicked(bool checked);
+
+    void on_actionvolumeUP_triggered();
+
+    void on_actionvolumeDown_triggered();
+
+    void on_actionmoveToLeft_triggered();
+
+    void on_actionmoveToRight_triggered();
+
 private:
     Ui::MainWindow *ui;
     SettingsForm *sf;

@@ -25,6 +25,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&audio_out, &QAudioOutput::volumeChanged, this, &MainWindow::update_volume_lable);
     connect(ui->volume_slider, &QSlider::valueChanged, this, [this](){
         this->audio_out.setVolume(((float)ui->volume_slider->value())/100);
+        if (this->audio_out.isMuted()) {
+            ui->mute_btn->click();
+        }
     });
     connect(this->player, &QMediaPlayer::durationChanged, this, &MainWindow::update_duration);
     connect(this->player, &QMediaPlayer::positionChanged, this, &MainWindow::update_position);
@@ -45,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent)
         ui->music_file_name->setText(md.value(QMediaMetaData::Title).toString());
         ui->albom_name_lbl->setText(md.value(QMediaMetaData::AlbumTitle).toString());
         ui->group_name_lbl->setText(md.value(QMediaMetaData::ContributingArtist).toString());
+
+        this->setWindowTitle("MusicPlayer: " + md.value(QMediaMetaData::Title).toString());
 
 
         img = md.value(QMediaMetaData::ThumbnailImage).view<QImage>();
@@ -105,6 +110,12 @@ MainWindow::MainWindow(QWidget *parent)
         }
         f.close();
     }
+
+    // ui->actionmoveToLeft->setVisible(false);
+    // ui->actionmoveToRight->setVisible(false);
+    // ui->actionvolumeDown->setVisible(false);
+    // ui->actionvolumeUP->setVisible(false);
+
 }
 
 MainWindow::~MainWindow()
@@ -294,5 +305,42 @@ void MainWindow::on_actionSettings_triggered()
     sf = new SettingsForm();
     sf->show();
 
+}
+
+
+void MainWindow::on_mute_btn_clicked(bool checked)
+{
+    this->audio_out.setMuted(checked);
+
+    if (checked) {
+        ui->mute_btn->setIcon(QIcon(":/icons/contorl/icons/mute.png"));
+    } else {
+        ui->mute_btn->setIcon(QIcon(":/icons/contorl/icons/unmute.png"));
+    }
+
+}
+
+
+void MainWindow::on_actionvolumeUP_triggered()
+{
+    ui->volume_slider->setValue(ui->volume_slider->value()+5);
+}
+
+
+void MainWindow::on_actionvolumeDown_triggered()
+{
+    ui->volume_slider->setValue(ui->volume_slider->value()-5);
+}
+
+
+void MainWindow::on_actionmoveToLeft_triggered()
+{
+    this->player->setPosition(this->player->position() - 1000);
+}
+
+
+void MainWindow::on_actionmoveToRight_triggered()
+{
+    this->player->setPosition(this->player->position() + 1000);
 }
 
