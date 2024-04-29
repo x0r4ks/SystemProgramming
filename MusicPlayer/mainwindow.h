@@ -6,6 +6,7 @@
 
 #include <QAudioOutput>
 #include <QListWidgetItem>
+#include <QGraphicsPixmapItem>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -50,6 +51,9 @@ private:
     Ui::MainWindow *ui;
     QMediaPlayer *player;
     QAudioOutput audio_out;
+
+    QGraphicsScene *scene;
+    QGraphicsPixmapItem *item;
 
     bool randome_mode = false;
     bool repeat_mode = false;

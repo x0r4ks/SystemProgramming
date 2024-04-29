@@ -6,7 +6,8 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QDirIterator>
-
+#include <QPixmap>
+#include <QMediaMetaData>
 
 
 
@@ -32,12 +33,31 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     connect(this->player, &QMediaPlayer::playbackStateChanged, this, [this](){
-        if (this->player->playbackState() == QMediaPlayer::StoppedState) {
+        if (this->player->playbackState() == QMediaPlayer::StoppedState && player->position() == player->duration()) {
             ui->next_btn->click();
             ui->duration_slider->clearFocus();
         }
     });
 
+    connect(this->player, &QMediaPlayer::metaDataChanged, this, [this](){
+        QMediaMetaData md = this->player->metaData();
+        ui->music_file_name->setText(md.value(QMediaMetaData::Title).toString());
+        QImage img = md.value(QMediaMetaData::ThumbnailImage).view<QImage>();
+        scene = new QGraphicsScene();
+
+        // img= img.scaled(ui->image_prev->size().width(), ui->image_prev->size().height(), Qt::KeepAspectRatio);
+
+
+        ui->image_prev->setScene(scene);
+
+        img = img.scaled(ui->image_prev->width(), ui->image_prev->height(), Qt::KeepAspectRatio);
+
+        item = new QGraphicsPixmapItem(QPixmap::fromImage(img));
+
+        scene->addItem(item);
+
+
+    });
 }
 
 MainWindow::~MainWindow()
@@ -117,7 +137,7 @@ void MainWindow::on_actionOpen_Files_triggered()
 
 void MainWindow::on_prev_btn_clicked()
 {
-    play_list_count--;
+    play_list_count-=1;
     if (play_list_count < 0) {
         play_list_count = this->paths.size() - 1;
     }
@@ -132,9 +152,11 @@ void MainWindow::play_by_id(int id)
     if (ui->play_stop_btn->isChecked())
         ui->play_stop_btn->click();
 
+
     this->player->play();
 
-    ui->music_file_name->setText(ui->playlist_lv->currentItem()->text());
+    // ui->music_file_name->setText(ui->playlist_lv->currentItem()->text());
+
 }
 
 
@@ -142,7 +164,7 @@ void MainWindow::on_next_btn_clicked()
 {
     if (!randome_mode)
     {
-        play_list_count++;
+        play_list_count+=1;
         if (play_list_count >= this->paths.size()) {
             play_list_count = 0;
         }
