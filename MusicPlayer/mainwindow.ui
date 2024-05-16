@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>679</width>
-    <height>400</height>
+    <width>855</width>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,6 +21,12 @@
    <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">
      <widget class="QSplitter" name="splitter_2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -28,7 +34,7 @@
        </size>
       </property>
       <property name="orientation">
-       <enum>Qt::Orientation::Vertical</enum>
+       <enum>Qt::Vertical</enum>
       </property>
       <widget class="QSplitter" name="splitter">
        <property name="minimumSize">
@@ -38,13 +44,13 @@
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Shape::NoFrame</enum>
+        <enum>QFrame::NoFrame</enum>
        </property>
        <property name="lineWidth">
         <number>1</number>
        </property>
        <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
+        <enum>Qt::Horizontal</enum>
        </property>
        <property name="opaqueResize">
         <bool>true</bool>
@@ -54,10 +60,10 @@
          <item>
           <widget class="QFrame" name="frame">
            <property name="frameShape">
-            <enum>QFrame::Shape::StyledPanel</enum>
+            <enum>QFrame::StyledPanel</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Shadow::Raised</enum>
+            <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout">
             <item row="0" column="0">
@@ -69,13 +75,13 @@
                </sizepolicy>
               </property>
               <property name="frameShape">
-               <enum>QFrame::Shape::NoFrame</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="interactive">
                <bool>false</bool>
               </property>
               <property name="resizeAnchor">
-               <enum>QGraphicsView::ViewportAnchor::NoAnchor</enum>
+               <enum>QGraphicsView::NoAnchor</enum>
               </property>
              </widget>
             </item>
@@ -94,7 +100,7 @@
             <string>MUSIC_NAME</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -112,7 +118,7 @@
               <string>GROUP_NAME</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignCenter</set>
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
@@ -128,7 +134,7 @@
               <string>ALBOM_NAME</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignCenter</set>
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
@@ -145,6 +151,12 @@
        </widget>
       </widget>
       <widget class="QWidget" name="widget_3" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -154,7 +166,7 @@
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>100</height>
+         <height>130</height>
         </size>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
@@ -165,7 +177,7 @@
             <item>
              <spacer name="horizontalSpacer">
               <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -187,7 +199,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="res.qrc">
+               <iconset>
                 <normaloff>:/icons/contorl/icons/loop.png</normaloff>:/icons/contorl/icons/loop.png</iconset>
               </property>
               <property name="shortcut">
@@ -210,7 +222,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="res.qrc">
+               <iconset>
                 <normaloff>:/icons/contorl/icons/previous-track.png</normaloff>:/icons/contorl/icons/previous-track.png</iconset>
               </property>
               <property name="shortcut">
@@ -230,7 +242,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="res.qrc">
+               <iconset>
                 <normaloff>:/icons/contorl/icons/play.png</normaloff>:/icons/contorl/icons/play.png</iconset>
               </property>
               <property name="iconSize">
@@ -262,7 +274,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="res.qrc">
+               <iconset>
                 <normaloff>:/icons/contorl/icons/next-track.png</normaloff>:/icons/contorl/icons/next-track.png</iconset>
               </property>
               <property name="shortcut">
@@ -282,7 +294,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="res.qrc">
+               <iconset>
                 <normaloff>:/icons/contorl/icons/random.png</normaloff>:/icons/contorl/icons/random.png</iconset>
               </property>
               <property name="shortcut">
@@ -296,7 +308,7 @@
             <item>
              <spacer name="horizontalSpacer_3">
               <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -332,7 +344,7 @@
                </sizepolicy>
               </property>
               <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
@@ -355,6 +367,12 @@
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QLabel" name="volume_lable">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Volume 50% :</string>
               </property>
@@ -372,7 +390,7 @@
                <number>50</number>
               </property>
               <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
@@ -388,7 +406,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="res.qrc">
+               <iconset>
                 <normaloff>:/icons/contorl/icons/unmute.png</normaloff>:/icons/contorl/icons/unmute.png</iconset>
               </property>
               <property name="iconSize">
@@ -408,7 +426,7 @@
             <item>
              <spacer name="horizontalSpacer_2">
               <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -433,8 +451,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>679</width>
-     <height>28</height>
+     <width>855</width>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -444,6 +462,9 @@
     <addaction name="actionOpen_Files"/>
     <addaction name="actionOpen_Dir"/>
     <addaction name="actionSettings"/>
+    <addaction name="actionOpen_PlayList"/>
+    <addaction name="actionSave_CUE"/>
+    <addaction name="actionSave_Portable_CUE"/>
    </widget>
    <widget class="QMenu" name="menuContol">
     <property name="enabled">
@@ -468,15 +489,24 @@
    <property name="text">
     <string>&amp;Open Files</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionOpen_Dir">
    <property name="text">
     <string>Load &amp;Dir</string>
    </property>
+   <property name="shortcut">
+    <string>Meta+Ctrl+O</string>
+   </property>
   </action>
   <action name="actionSettings">
    <property name="text">
     <string>&amp;Settings</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+,</string>
    </property>
   </action>
   <action name="actionvolumeUP">
@@ -509,6 +539,24 @@
    </property>
    <property name="shortcut">
     <string>Right</string>
+   </property>
+  </action>
+  <action name="actionOpen_PlayList">
+   <property name="text">
+    <string>Open CUE file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+O</string>
+   </property>
+  </action>
+  <action name="actionSave_CUE">
+   <property name="text">
+    <string>Save Local CUE</string>
+   </property>
+  </action>
+  <action name="actionSave_Portable_CUE">
+   <property name="text">
+    <string>Save Portable CUE</string>
    </property>
   </action>
  </widget>

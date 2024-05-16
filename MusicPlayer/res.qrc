@@ -1,15 +1,26 @@
 <RCC>
     <qresource prefix="/icons">
         <file>icons/icon.ico</file>
+        <file>icons/vinyl.jpeg</file>
     </qresource>
-    <qresource prefix="/icons/contorl">
-        <file>icons/next-track.png</file>
-        <file>icons/play.png</file>
-        <file>icons/previous-track.png</file>
-        <file>icons/stop.png</file>
-        <file>icons/random.png</file>
-        <file>icons/loop.png</file>
-        <file>icons/mute.png</file>
-        <file>icons/unmute.png</file>
+    <qresource prefix="/light">
+        <file>icons/light/loop.png</file>
+        <file>icons/light/mute.png</file>
+        <file>icons/light/next-track.png</file>
+        <file>icons/light/play.png</file>
+        <file>icons/light/previous-track.png</file>
+        <file>icons/light/random.png</file>
+        <file>icons/light/stop.png</file>
+        <file>icons/light/unmute.png</file>
+    </qresource>
+    <qresource prefix="/dark">
+        <file>icons/dark/loop.png</file>
+        <file>icons/dark/mute.png</file>
+        <file>icons/dark/next-track.png</file>
+        <file>icons/dark/play.png</file>
+        <file>icons/dark/previous-track.png</file>
+        <file>icons/dark/random.png</file>
+        <file>icons/dark/stop.png</file>
+        <file>icons/dark/unmute.png</file>
     </qresource>
 </RCC>

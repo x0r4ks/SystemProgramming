@@ -9,7 +9,7 @@
 #include <QDirIterator>
 #include <QPixmap>
 #include <QMediaMetaData>
-
+#include <QListWidget>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -21,6 +21,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->player = new QMediaPlayer();
     this->player->setAudioOutput(&audio_out);
     audio_out.setVolume(0.5);
+
+    ui->playlist_lv->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->playlist_lv, &QListWidget::customContextMenuRequested, this, &MainWindow::create_custom_menu);
 
     connect(&audio_out, &QAudioOutput::volumeChanged, this, &MainWindow::update_volume_lable);
     connect(ui->volume_slider, &QSlider::valueChanged, this, [this](){
@@ -44,26 +47,49 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(this->player, &QMediaPlayer::metaDataChanged, this, [this](){
-        QMediaMetaData md = this->player->metaData();
-        ui->music_file_name->setText(md.value(QMediaMetaData::Title).toString());
-        ui->albom_name_lbl->setText(md.value(QMediaMetaData::AlbumTitle).toString());
-        ui->group_name_lbl->setText(md.value(QMediaMetaData::ContributingArtist).toString());
+        try {
+            QMediaMetaData md = this->player->metaData();
+            ui->music_file_name->setText(md.value(QMediaMetaData::Title).toString());
+            ui->albom_name_lbl->setText(md.value(QMediaMetaData::AlbumTitle).toString());
+            ui->group_name_lbl->setText(md.value(QMediaMetaData::ContributingArtist).toString());
 
-        this->setWindowTitle("MusicPlayer: " + md.value(QMediaMetaData::Title).toString());
 
 
-        img = md.value(QMediaMetaData::ThumbnailImage).view<QImage>();
-        scene = new QGraphicsScene();
 
-        ui->image_prev->setScene(scene);
+            this->setWindowTitle("MusicPlayer: " + md.value(QMediaMetaData::Title).toString());
 
-        img = img.scaled(ui->image_prev->width(), ui->image_prev->height(), Qt::KeepAspectRatio);
+            if (md.value(QMediaMetaData::AudioCodec).toString() == "MP3") {
+                img = md.value(QMediaMetaData::ThumbnailImage).view<QImage>();
+                scene = new QGraphicsScene();
 
-        item = new QGraphicsPixmapItem(QPixmap::fromImage(img));
+                ui->image_prev->setScene(scene);
 
-        scene->addItem(item);
+                img = img.scaled(ui->image_prev->width(), ui->image_prev->height(), Qt::KeepAspectRatio);
 
-        old_size = ui->image_prev->size();
+                item = new QGraphicsPixmapItem(QPixmap::fromImage(img));
+
+                scene->addItem(item);
+
+                old_size = ui->image_prev->size();
+            } else {
+                img = QImage(":/icons/icons/vinyl.jpeg");
+                scene = new QGraphicsScene();
+
+                ui->image_prev->setScene(scene);
+
+                img = img.scaled(ui->image_prev->width(), ui->image_prev->height(), Qt::KeepAspectRatio);
+
+                item = new QGraphicsPixmapItem(QPixmap::fromImage(img));
+
+                scene->addItem(item);
+
+                old_size = ui->image_prev->size();
+            }
+
+
+        } catch (const std::exception& err) {
+            QMessageBox::warning(this, "Warning", err.what());
+        }
     });
 
     QFileInfo f(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0)+"/"+PROGRAM_NAME+"/"+"music_list.txt");
@@ -100,7 +126,7 @@ MainWindow::MainWindow(QWidget *parent)
                 if (!paths.contains(qsl.at(i))) {
                     QFileInfo f(qsl.at(i));
                     if (suffix.contains(f.suffix())) {
-                        ui->playlist_lv->addItem(QString::number(i+1) + " " + f.fileName());
+                        ui->playlist_lv->addItem(f.fileName());
                         paths.push_back(qsl.at(i));
                     }
 
@@ -115,6 +141,12 @@ MainWindow::MainWindow(QWidget *parent)
     // ui->actionmoveToRight->setVisible(false);
     // ui->actionvolumeDown->setVisible(false);
     // ui->actionvolumeUP->setVisible(false);
+
+    button_color_prefix = "light";
+
+
+    update_button_icons_theme();
+    ui->play_stop_btn->setIcon(QIcon(":/" + button_color_prefix + "/icons/" + button_color_prefix +"/play.png"));
 
 }
 
@@ -136,10 +168,10 @@ void MainWindow::on_play_stop_btn_clicked(bool checked)
 {
 
     if (checked) {
-        ui->play_stop_btn->setIcon(QIcon(":/icons/contorl/icons/play.png"));
+        update_button_icons_theme();
         this->player->pause();
     } else {
-        ui->play_stop_btn->setIcon(QIcon(":/icons/contorl/icons/stop.png"));
+        update_button_icons_theme();
         this->player->play();
     }
 
@@ -178,11 +210,17 @@ void MainWindow::on_actionOpen_Files_triggered()
                                  QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0),
                                  "Audio files (*.mp3 *.flac *.wav *.ogg);;All files (*.*)");
 
+    ui->playlist_lv->clear();
+    paths.clear();
+
+
+
+
     for (int i = 0; i < np.size(); i++) {
         if (!paths.contains(np.at(i))) {
             QFileInfo f(np.at(i));
-            ui->playlist_lv->addItem(QString::number(i+1) + " " + f.fileName());
-
+            ui->playlist_lv->addItem(f.fileName());
+            qDebug() << np.at(0);
             paths.push_back(np.at(i));
         }
     }
@@ -205,7 +243,7 @@ void MainWindow::on_prev_btn_clicked()
 
 void MainWindow::play_by_id(int id)
 {
-    this->player->setSource(paths.at(id));
+    this->player->setSource(QUrl::fromLocalFile(paths.at(id)));
 
     ui->playlist_lv->setCurrentItem(ui->playlist_lv->item(id));
     if (ui->play_stop_btn->isChecked())
@@ -213,6 +251,26 @@ void MainWindow::play_by_id(int id)
 
 
     this->player->play();
+}
+
+void MainWindow::update_button_icons_theme()
+{
+    ui->next_btn->setIcon(QIcon(":/" + button_color_prefix + "/icons/" + button_color_prefix +"/next-track.png"));
+    ui->prev_btn->setIcon(QIcon(":/" + button_color_prefix + "/icons/" + button_color_prefix +"/previous-track.png"));
+    ui->repiat_btn->setIcon(QIcon(":/" + button_color_prefix + "/icons/" + button_color_prefix +"/loop.png"));
+    ui->rnd_btn->setIcon(QIcon(":/" + button_color_prefix + "/icons/" + button_color_prefix +"/random.png"));
+
+    if (audio_out.isMuted()) {
+        ui->mute_btn->setIcon(QIcon(":/" + button_color_prefix + "/icons/" + button_color_prefix +"/mute.png"));
+    } else {
+        ui->mute_btn->setIcon(QIcon(":/" + button_color_prefix + "/icons/" + button_color_prefix +"/unmute.png"));
+    }
+
+    if (player->isPlaying()) {
+        ui->play_stop_btn->setIcon(QIcon(":/" + button_color_prefix + "/icons/" + button_color_prefix +"/play.png"));
+    } else {
+        ui->play_stop_btn->setIcon(QIcon(":/" + button_color_prefix + "/icons/" + button_color_prefix +"/stop.png"));
+    }
 }
 
 
@@ -246,6 +304,7 @@ void MainWindow::on_playlist_lv_itemDoubleClicked(QListWidgetItem *item)
 {
     play_list_count = ui->playlist_lv->currentRow();
     play_by_id(play_list_count);
+    update_button_icons_theme();
 }
 
 
@@ -281,7 +340,7 @@ void MainWindow::on_actionOpen_Dir_triggered()
         if (!paths.contains(qsl.at(i))) {
             QFileInfo f(qsl.at(i));
             if (suffix.contains(f.suffix())) {
-                ui->playlist_lv->addItem(QString::number(i+1) + " " + f.fileName());
+                ui->playlist_lv->addItem(f.fileName());
                 paths.push_back(qsl.at(i));
             }
 
@@ -293,9 +352,6 @@ void MainWindow::on_actionOpen_Dir_triggered()
         play_by_id(play_list_count);
     }
 }
-
-
-
 
 
 
@@ -313,9 +369,9 @@ void MainWindow::on_mute_btn_clicked(bool checked)
     this->audio_out.setMuted(checked);
 
     if (checked) {
-        ui->mute_btn->setIcon(QIcon(":/icons/contorl/icons/mute.png"));
+        update_button_icons_theme();
     } else {
-        ui->mute_btn->setIcon(QIcon(":/icons/contorl/icons/unmute.png"));
+        update_button_icons_theme();
     }
 
 }
@@ -342,5 +398,143 @@ void MainWindow::on_actionmoveToLeft_triggered()
 void MainWindow::on_actionmoveToRight_triggered()
 {
     this->player->setPosition(this->player->position() + 1000);
+}
+
+
+void MainWindow::on_actionOpen_PlayList_triggered()
+{
+    QString file = QFileDialog::getOpenFileName(this,
+                                          "Chose audio file",
+                                          QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0),
+                                          "Cue files (*.cue);;");
+
+    QVector<QString> musicList;
+
+    QFile f(file);
+    QFileInfo info_file(file);
+    QString path_prefix=info_file.path();
+
+    f.open(QIODevice::ReadOnly);
+    if (f.isOpen()) {
+        while(!f.atEnd()) {
+            QString line = f.readLine();
+            if (line.count("FILE") == 1) {
+                QVector<QString> pp = line.split("\"");
+                if (!pp.at(1).contains("/")) {
+                    musicList.push_back(path_prefix + "/" + pp.at(1));
+                } else {
+                    musicList.push_back(pp.at(1));
+                }
+            }
+        }
+    } f.close();
+
+
+    ui->playlist_lv->clear();
+    paths.clear();
+    for (int i = 0; i < musicList.size(); i++) {
+        if (!paths.contains(musicList.at(i))) {
+            QFileInfo ff(musicList.at(i));
+            if (ff.exists()) {
+                ui->playlist_lv->addItem(ff.fileName());
+                paths.push_back(musicList.at(i));
+            }
+        }
+    }
+}
+
+void MainWindow::create_custom_menu(QPoint point)
+{
+    QPoint globalPos = ui->playlist_lv->mapToGlobal(point);
+
+
+    QMenu myMenu;
+    myMenu.addAction("Add", this, [this](){
+        QVector<QString> np = QFileDialog::getOpenFileNames(this,
+                                                            "Chose audio file",
+                                                            QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0),
+                                                            "Audio files (*.mp3 *.flac *.wav *.ogg);;All files (*.*)");
+
+        for (int i = 0; i < np.size(); i++) {
+            if (!paths.contains(np.at(i))) {
+                QFileInfo f(np.at(i));
+                ui->playlist_lv->addItem(f.fileName());
+                qDebug() << np.at(0);
+                paths.push_back(np.at(i));
+            }
+        }
+
+    });
+    myMenu.addAction("Delete",  this, [this](){
+        int row = ui->playlist_lv->currentRow();
+        QListWidgetItem *item = ui->playlist_lv->takeItem(row);
+        delete item;
+        paths.removeAt(row);
+    });
+
+    myMenu.addAction("Clear",  this, [this](){ui->playlist_lv->clear(); paths.clear();});
+
+    myMenu.exec(globalPos);
+}
+
+
+void MainWindow::on_actionSave_CUE_triggered()
+{
+    QString file_path = QFileDialog::getSaveFileName(this,
+                                                     "Save CUE",
+                                                     QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0),
+                                                     "CUE files (*.cue);;All files (*.*)");
+
+
+    QFile f(file_path);
+    if (f.open(QIODevice::WriteOnly)) {
+        f.write("REM GENRE uncknow\n");
+        f.write("REM DATE 1970\n");
+        f.write("REM DISCID 00000000\n");
+        f.write("REM COMMENT \"MediaPlayer playlist file\"\n");
+        f.write("PERFORMER \"UNKNOW\"\n");
+        f.write("TITLE \"UNKNOW\"\n");
+
+        for (QString path : paths) {
+            f.write("FILE \"");
+            f.write(path.toStdString().c_str());
+            f.write("\" WAVE\n");
+        }
+        f.close();
+    }
+}
+
+
+void MainWindow::on_actionSave_Portable_CUE_triggered()
+{
+    QString file_path = QFileDialog::getSaveFileName(this,
+                                                     "Save CUE",
+                                                     QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0),
+                                                     "CUE files (*.cue);;All files (*.*)");
+    QFileInfo fI(file_path);
+    QString dir_name = fI.fileName();
+    QDir dir;
+    dir.mkdir(fI.path() +"/"+ fI.fileName().split(".")[0]);
+    QString save_path = fI.path() +"/"+ fI.fileName().split(".")[0];
+
+    QFile f(save_path +"/"+ fI.fileName());
+    if (f.open(QIODevice::WriteOnly)) {
+        f.write("REM GENRE uncknow\n");
+        f.write("REM DATE 1970\n");
+        f.write("REM DISCID 00000000\n");
+        f.write("REM COMMENT \"MediaPlayer playlist file\"\n");
+        f.write("PERFORMER \"UNKNOW\"\n");
+        f.write("TITLE \"UNKNOW\"\n");
+
+        for (QString path : paths) {
+            QFileInfo Fi(path);
+            f.write("FILE \"");
+            f.write(Fi.fileName().toStdString().c_str());
+            f.write("\" WAVE\n");
+
+            QFile::copy(path, fI.path() +"/"+ fI.fileName().split(".")[0] + "/" + Fi.fileName());
+        }
+        f.close();
+    }
 }
 

@@ -9,6 +9,7 @@
 #include <QAudioOutput>
 #include <QListWidgetItem>
 #include <QGraphicsPixmapItem>
+#include <QFile>
 
 #include "settingsform.h"
 
@@ -63,6 +64,14 @@ private slots:
 
     void on_actionmoveToRight_triggered();
 
+    void on_actionOpen_PlayList_triggered();
+
+    void create_custom_menu(QPoint point);
+
+    void on_actionSave_CUE_triggered();
+
+    void on_actionSave_Portable_CUE_triggered();
+
 private:
     Ui::MainWindow *ui;
     SettingsForm *sf;
@@ -77,6 +86,7 @@ private:
 
     bool randome_mode = false;
     bool repeat_mode = false;
+    QString button_color_prefix = "";
 
 
     int play_list_count = -1;
@@ -84,6 +94,8 @@ private:
     QVector<QString> paths;
 
     void play_by_id(int id);
+
+    void update_button_icons_theme();
 
 
 };
